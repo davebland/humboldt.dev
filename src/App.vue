@@ -1,26 +1,36 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <HWSLogo bg="#ff1"/>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import HWSLogo from './components/HWSLogo.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    HWSLogo
   }
 }
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap');
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Cutive Mono', monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+body {
+  background: darkgreen;
+  animation: fadein 500ms;
+}
+
+@keyframes fadein {
+  from {opacity: 0;}
+  to {opacity: 1;}
 }
 </style>
