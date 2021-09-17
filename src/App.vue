@@ -1,14 +1,29 @@
 <template>
-  <HWSLogo bg="#ff1"/>
+  <div class="row">
+    <HWSLogo bg="#fff"/>
+    <p>Join in by clicking below</p>
+  </div>
+  <Canvas :current-pixel-data="getPixelData()"/>
 </template>
 
 <script>
 import HWSLogo from './components/HWSLogo.vue'
+import Canvas from './components/Canvas.vue'
 
 export default {
   name: 'App',
   components: {
-    HWSLogo
+    HWSLogo,
+    Canvas
+  },
+  methods: {
+    getPixelData() {
+      return {
+        data1: 'data1',
+        data2: 'data2',
+        data3: 'data3'
+      }
+    }
   }
 }
 </script>
@@ -18,19 +33,21 @@ export default {
 
 #app {
   font-family: 'Cutive Mono', monospace;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
 }
 
 body {
-  background: darkgreen;
   animation: fadein 500ms;
 }
 
 @keyframes fadein {
   from {opacity: 0;}
   to {opacity: 1;}
+}
+
+.row  {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border: 1px solid black;
 }
 </style>
