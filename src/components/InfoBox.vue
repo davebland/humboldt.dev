@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <p v-for="(k,v) in pixelData" :key="v">{{k}}: {{v}}</p>
+    <p v-for="(v,i) in pixelData" :key="v">{{i}}: {{v}}</p>
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 export default {
   name: 'InfoBox',
   props: [
-    'pixelData'
+    'pixelData',
   ],
   mounted() {
     console.log(this.pixelData);

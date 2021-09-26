@@ -1,12 +1,13 @@
 <template>
   <div class="fixed">
     <canvas class="canvas" ref="canvas" @click="selectPixel"></canvas>
-    <InfoBox :pixel-data="currentPixelData" id="pixel-info-box"/>
+    <InfoBox :style="infoBoxStyleObject" :pixel-data="infoBoxData" id="pixel-info-box"/>
   </div>
 </template>
 
 <script>
 import InfoBox from './InfoBox.vue'
+import {getUserIp} from './ipinfo'
 
 export default {
   name: 'Canvas',
@@ -16,6 +17,20 @@ export default {
   props: [
     'currentPixelData'
   ],
+  data() {
+    return {
+      infoBoxStyleObject: {       
+        left: '10px',
+        top: '10px',
+
+      },
+      infoBoxData: {
+        browser: navigator.userAgent,
+        datetime: new Date().toISOString(),
+        userString: ''
+      }
+    }
+  },
   methods: {
     populate() {   
       // let ctx = this.$refs.canvas.getContext('2d');
@@ -23,11 +38,9 @@ export default {
       // ctx.fillRect(10, 10, 50, 50);
     },
     selectPixel(event) {
-      console.log(event.offsetX);
-      console.log(event.offsetY);
-      // scale from display coordinates to model coordinates
-      var modelX = Math.round( event.offsetX * (this.$refs.canvas.width / this.$refs.canvas.offsetWidth) );
-      var modelY = Math.round( event.offsetY * (this.$refs.canvas.height / this.$refs.canvas.offsetHeight) ); 
+      // scale mouse pointer position from display coordinates to model coordinates
+      let modelX = Math.round( event.offsetX * (this.$refs.canvas.width / this.$refs.canvas.offsetWidth) );
+      let modelY = Math.round( event.offsetY * (this.$refs.canvas.height / this.$refs.canvas.offsetHeight) ); 
       // Add colour to the canvas pixel at the mouse cordinates
       let ctx = this.$refs.canvas.getContext('2d');
       var imgData = ctx.createImageData(1, 1);
@@ -39,6 +52,14 @@ export default {
         imgData.data[i+3] = 255;
       }
       ctx.putImageData(imgData, modelX, modelY); 
+      // Show the info box
+      this.showInfoBox(event.offsetX, event.offsetY);
+    },
+    showInfoBox(x, y) {
+      // Set location to mouse cords
+      this.infoBoxStyleObject.left = x+'px';
+      this.infoBoxStyleObject.top = y+'px';
+      getUserIp();
     }
   },
   mounted() {
@@ -57,8 +78,7 @@ export default {
 
 #pixel-info-box {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  margin: 5px;
 }
 
 .fixed {

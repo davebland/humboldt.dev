@@ -18,6 +18,7 @@ export default {
   },
   methods: {
     getPixelData() {
+      // Dummy
       return {
         data1: 'data1',
         data2: 'data2',
