@@ -8,6 +8,7 @@
 <script>
 import InfoBox from './InfoBox.vue'
 import {getUserIp} from './ipinfo'
+import {calculatePixelColour} from './cryptoColourGenerator'
 
 export default {
   name: 'Canvas',
@@ -25,9 +26,10 @@ export default {
 
       },
       infoBoxData: {
-        browser: navigator.userAgent,
-        datetime: new Date().toISOString(),
-        userString: ''
+        browser: String(),
+        datetime: String(),
+        userIp: String(),
+        userString: String()
       }
     }
   },
@@ -55,11 +57,16 @@ export default {
       // Show the info box
       this.showInfoBox(event.offsetX, event.offsetY);
     },
-    showInfoBox(x, y) {
+    async showInfoBox(x, y) {
       // Set location to mouse cords
       this.infoBoxStyleObject.left = x+'px';
       this.infoBoxStyleObject.top = y+'px';
-      getUserIp();
+      // Populate dynamic data
+      this.infoBoxData.browser = navigator.userAgent;
+      this.infoBoxData.datetime = new Date().toISOString();
+      this.infoBoxData.userIp = await getUserIp();
+      // Calculate colour from strings
+      this.infoBoxData.pixelColour = await calculatePixelColour(this.infoBoxData);
     }
   },
   mounted() {
