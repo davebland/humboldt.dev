@@ -1,7 +1,7 @@
 <template>
   <div class="fixed">
     <canvas class="canvas" ref="canvas" @click="selectPixel"></canvas>
-    <InfoBox :style="infoBoxStyleObject" :pixel-data="infoBoxData" id="pixel-info-box"/>
+    <InfoBox :style="infoBoxStyleObject" :info-box-data="infoBoxData" id="pixel-info-box"/>
   </div>
 </template>
 
@@ -29,7 +29,8 @@ export default {
         browser: String(),
         datetime: String(),
         userIp: String(),
-        userString: String()
+        userString: String(),
+        pixelColour: [0,0,0,0]
       }
     }
   },
@@ -40,22 +41,28 @@ export default {
       // ctx.fillRect(10, 10, 50, 50);
     },
     selectPixel(event) {
-      // scale mouse pointer position from display coordinates to model coordinates
-      let modelX = Math.round( event.offsetX * (this.$refs.canvas.width / this.$refs.canvas.offsetWidth) );
-      let modelY = Math.round( event.offsetY * (this.$refs.canvas.height / this.$refs.canvas.offsetHeight) ); 
-      // Add colour to the canvas pixel at the mouse cordinates
       let ctx = this.$refs.canvas.getContext('2d');
+      // scale mouse pointer position from display coordinates to model coordinates
+      const modelX = Math.round( event.offsetX * (this.$refs.canvas.width / this.$refs.canvas.offsetWidth) );
+      const modelY = Math.round( event.offsetY * (this.$refs.canvas.height / this.$refs.canvas.offsetHeight) );
+      // Determine if pixel is already taken
+      const existingPixelData = ctx.getImageData(modelX, modelY, 1, 1);
+      if (!existingPixelData.data.every((e)=>e==0)) {
+        console.log('taken');
+        return
+      }
+      // Show the info box
+      this.showInfoBox(event.offsetX, event.offsetY);
+      // Add colour to the canvas pixel at the mouse cordinates
       var imgData = ctx.createImageData(1, 1);
       var i;
       for (i = 0; i < imgData.data.length; i += 4) {
-        imgData.data[i+0] = 255;
-        imgData.data[i+1] = 0;
-        imgData.data[i+2] = 0;
+        imgData.data[i+0] = this.infoBoxData.pixelColour[0];
+        imgData.data[i+1] = this.infoBoxData.pixelColour[1];
+        imgData.data[i+2] = this.infoBoxData.pixelColour[2];
         imgData.data[i+3] = 255;
       }
-      ctx.putImageData(imgData, modelX, modelY); 
-      // Show the info box
-      this.showInfoBox(event.offsetX, event.offsetY);
+      ctx.putImageData(imgData, modelX, modelY);
     },
     async showInfoBox(x, y) {
       // Set location to mouse cords

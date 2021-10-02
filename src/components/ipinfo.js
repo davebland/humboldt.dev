@@ -3,9 +3,9 @@
 const AUTHPARAMS = "token=3a3dca25b42d5e"
 const BASEURL = "https://ipinfo.io/"
 
-export function getUserIp() {
+export async function getUserIp() {
     // Make a basic call to ipinfo and return user IP from response
-    let ip = fetch(BASEURL+'?'+AUTHPARAMS)
+    return await fetch(BASEURL+'?'+AUTHPARAMS)
                 .then((response) => {
                     if (response.ok) {
                         return response.json();
@@ -18,5 +18,4 @@ export function getUserIp() {
                     console.log("API Error: " + e);
                     return 'Not found'
                 })
-    return ip
 }

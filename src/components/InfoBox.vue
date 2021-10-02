@@ -1,7 +1,8 @@
 <template>
-  <div class="box">
-    <p v-for="(v,i) in pixelData" :key="v">{{i}}: {{v.slice(0,20)}}</p>
-    <div class="pixel-colour-icon" style="background: rgba(1,1,1,0.5);"></div>
+  <div class="box" :style="{ background: 'rgba('+infoBoxData.pixelColour[0]+','+infoBoxData.pixelColour[1]+','+infoBoxData.pixelColour[2]+','+infoBoxData.pixelColour[3]+')'}">
+    <p v-for="(v,i) in infoBoxData" :key="v">{{i}}: {{v.slice(0,20)}}</p>
+    <input type="text" name="userStrig" id="">
+    <button>Save</button>
   </div>
 </template>
 
@@ -9,10 +10,10 @@
 export default {
   name: 'InfoBox',
   props: [
-    'pixelData',
+    'infoBoxData',
   ],
   mounted() {
-    console.log(this.pixelData);
+    console.log(this.infoBoxData);
   }
 }
 </script>
@@ -23,9 +24,5 @@ export default {
   padding: 10px;
   border: 1px solid blue;
   border-radius: 5px;
-}
-.pixel-colour-icon {
-  width: 10px;
-  height: 10px;
 }
 </style>
