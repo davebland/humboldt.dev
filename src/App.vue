@@ -1,8 +1,9 @@
 <template>
   <div class="row">
     <HWSLogo bg="#fff"/>
-    <p>Join in by clicking below</p>
+    <h3>Click on the canvas to make a contribution</h3>
   </div>
+  <hr>
   <Canvas :current-pixel-data="getPixelData()"/>
 </template>
 
@@ -48,7 +49,6 @@ body {
 .row  {
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  border: 1px solid black;
+  justify-content: space-between;
 }
 </style>

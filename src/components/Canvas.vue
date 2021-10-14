@@ -1,7 +1,7 @@
 <template>
   <div class="fixed">
     <canvas class="canvas" ref="canvas" @click="selectPixel"></canvas>
-    <InfoBox :style="infoBoxStyleObject" :info-box-data="infoBoxData" id="pixel-info-box"/>
+    <InfoBox :style="infoBoxStyleObject" :info-box-data="infoBoxData" id="pixel-info-box" @submitNewPixel="submitNewPixel"/>
   </div>
 </template>
 
@@ -21,8 +21,8 @@ export default {
   data() {
     return {
       infoBoxStyleObject: {       
-        left: '10px',
-        top: '10px',
+        left: '',
+        top: '',
 
       },
       infoBoxData: {
@@ -35,10 +35,21 @@ export default {
     }
   },
   methods: {
-    populate() {   
-      // let ctx = this.$refs.canvas.getContext('2d');
-      // ctx.fillStyle = 'rgb(200, 0, 0)';
-      // ctx.fillRect(10, 10, 50, 50);
+    populate() {
+      // Get current pixel array from API
+      const curPixelArray = [
+        //DummyData
+        [10,10,100,100,100,255],
+        [20,20, 150,150,150,255],
+        [30,30, 200,200,200,255],
+      ]
+      // Populate canvas with current pixels
+      let ctx = this.$refs.canvas.getContext('2d');
+      curPixelArray.forEach((pixel) => {
+        console.log(pixel);
+        ctx.fillStyle = 'rgba('+pixel[2]+','+pixel[3]+','+pixel[4]+','+pixel[5]+')';
+        ctx.fillRect(pixel[0], pixel[1], 1, 1);
+      })
     },
     selectPixel(event) {
       let ctx = this.$refs.canvas.getContext('2d');
@@ -49,10 +60,11 @@ export default {
       const existingPixelData = ctx.getImageData(modelX, modelY, 1, 1);
       if (!existingPixelData.data.every((e)=>e==0)) {
         console.log('taken');
+        this.showExistingInfoBox(event.offsetX, event.offsetY, existingPixelData);
         return
       }
-      // Show the info box
-      this.showInfoBox(event.offsetX, event.offsetY);
+      // Show the new info box
+      this.showNewInfoBox(event.offsetX, event.offsetY);
       // Add colour to the canvas pixel at the mouse cordinates
       var imgData = ctx.createImageData(1, 1);
       var i;
@@ -64,7 +76,7 @@ export default {
       }
       ctx.putImageData(imgData, modelX, modelY);
     },
-    async showInfoBox(x, y) {
+    async showNewInfoBox(x, y) {
       // Set location to mouse cords
       this.infoBoxStyleObject.left = x+'px';
       this.infoBoxStyleObject.top = y+'px';
@@ -74,6 +86,29 @@ export default {
       this.infoBoxData.userIp = await getUserIp();
       // Calculate colour from strings
       this.infoBoxData.pixelColour = await calculatePixelColour(this.infoBoxData);
+    },
+    async showExistingInfoBox(x,y, existingPixelData) {
+      // Query API for data about this pixel
+      const existingPixelInfo = {
+        //DummyData
+        browser: 'testbrowser',
+        datetime: new Date("2021-01-01").toISOString(),
+        userIp: 'testIp'
+      }
+      // Show info box with existing data
+      this.infoBoxStyleObject.left = x+'px';
+      this.infoBoxStyleObject.top = y+'px';
+      // Populate with retrieved data
+      this.infoBoxData.browser = existingPixelInfo.browser;
+      this.infoBoxData.datetime = existingPixelInfo.datetime;
+      this.infoBoxData.userIp = existingPixelInfo.userIp;
+      console.log(existingPixelData.data);
+      this.infoBoxData.pixelColour = Array.from(existingPixelData.data);
+    },
+    async submitNewPixel() {
+      // Send new pixel to API
+      console.log("Sending to API: "+this.infoBoxData);
+      window.location.replace('/?newPixel=123');
     }
   },
   mounted() {
@@ -85,9 +120,9 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .canvas  {
-  width: 100vw;
-  height: 100vh;
-  background-color: lightgray;
+  width: 100%;
+  height: 80vh;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 #pixel-info-box {

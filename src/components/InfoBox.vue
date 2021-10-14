@@ -1,8 +1,8 @@
 <template>
   <div class="box" :style="{ background: 'rgba('+infoBoxData.pixelColour[0]+','+infoBoxData.pixelColour[1]+','+infoBoxData.pixelColour[2]+','+infoBoxData.pixelColour[3]+')'}">
-    <p v-for="(v,i) in infoBoxData" :key="v">{{i}}: {{v.slice(0,20)}}</p>
-    <input type="text" name="userStrig" id="">
-    <button>Save</button>
+    <p v-for="(v,i) in infoBoxData" :key="v">{{i}}: {{v.slice(0,25)}}</p>
+    <input type="text" name="userString" id="">
+    <button @click="$emit('submitNewPixel')">Save</button>
   </div>
 </template>
 
