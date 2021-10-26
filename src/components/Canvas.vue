@@ -1,7 +1,7 @@
 <template>
   <div class="fixed">
-    <canvas class="canvas" ref="canvas" @click="selectPixel"></canvas>
-    <InfoBox :style="infoBoxStyleObject" :info-box-data="infoBoxData" id="pixel-info-box" @submitNewPixel="submitNewPixel"/>
+    <canvas class="canvas" ref="canvas" @click="selectPixel" width="500" height="500">Sorry, your browser needs to support canvas.</canvas>
+    <InfoBox :style="infoBoxStyleObject" :info-box-data="infoBoxData" id="info-box" @submitNewPixel="submitNewPixel"/>
   </div>
 </template>
 
@@ -60,26 +60,26 @@ export default {
       const existingPixelData = ctx.getImageData(modelX, modelY, 1, 1);
       if (!existingPixelData.data.every((e)=>e==0)) {
         console.log('taken');
-        this.showExistingInfoBox(event.offsetX, event.offsetY, existingPixelData);
+        this.showExistingPixelData(existingPixelData);
         return
       }
-      // Show the new info box
-      this.showNewInfoBox(event.offsetX, event.offsetY);
-      // Add colour to the canvas pixel at the mouse cordinates
-      var imgData = ctx.createImageData(1, 1);
-      var i;
-      for (i = 0; i < imgData.data.length; i += 4) {
-        imgData.data[i+0] = this.infoBoxData.pixelColour[0];
-        imgData.data[i+1] = this.infoBoxData.pixelColour[1];
-        imgData.data[i+2] = this.infoBoxData.pixelColour[2];
-        imgData.data[i+3] = 255;
-      }
-      ctx.putImageData(imgData, modelX, modelY);
+      // Else show the new pixel data
+      this.showNewIPixelData()
+      .then(() => {
+        // Add new colour to the canvas pixel at the mouse cordinates
+        var imgData = ctx.createImageData(1, 1);
+        var i;
+        for (i = 0; i < imgData.data.length; i += 4) {
+          imgData.data[i+0] = this.infoBoxData.pixelColour[0];
+          imgData.data[i+1] = this.infoBoxData.pixelColour[1];
+          imgData.data[i+2] = this.infoBoxData.pixelColour[2];
+          imgData.data[i+3] = 255;
+        }
+        ctx.putImageData(imgData, modelX, modelY);
+      });
+      
     },
-    async showNewInfoBox(x, y) {
-      // Set location to mouse cords
-      this.infoBoxStyleObject.left = x+'px';
-      this.infoBoxStyleObject.top = y+'px';
+    async showNewIPixelData() {
       // Populate dynamic data
       this.infoBoxData.browser = navigator.userAgent;
       this.infoBoxData.datetime = new Date().toISOString();
@@ -87,7 +87,7 @@ export default {
       // Calculate colour from strings
       this.infoBoxData.pixelColour = await calculatePixelColour(this.infoBoxData);
     },
-    async showExistingInfoBox(x,y, existingPixelData) {
+    async showExistingPixelData(existingPixelData) {
       // Query API for data about this pixel
       const existingPixelInfo = {
         //DummyData
@@ -95,9 +95,6 @@ export default {
         datetime: new Date("2021-01-01").toISOString(),
         userIp: 'testIp'
       }
-      // Show info box with existing data
-      this.infoBoxStyleObject.left = x+'px';
-      this.infoBoxStyleObject.top = y+'px';
       // Populate with retrieved data
       this.infoBoxData.browser = existingPixelInfo.browser;
       this.infoBoxData.datetime = existingPixelInfo.datetime;
@@ -120,17 +117,26 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .canvas  {
-  width: 100%;
-  height: 80vh;
+  width: 90vw;
+  height: 70vh;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
-#pixel-info-box {
-  position: absolute;
+#info-box {
+  position: fixed;
   margin: 5px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
 }
 
 .fixed {
   position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
 }
+
+
 </style>
