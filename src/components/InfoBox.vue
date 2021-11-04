@@ -1,7 +1,9 @@
 <template>
   <div class="box" :style="{ background: 'rgba('+infoBoxData.pixelColour[0]+','+infoBoxData.pixelColour[1]+','+infoBoxData.pixelColour[2]+','+infoBoxData.pixelColour[3]+')'}">
-    <p v-for="(v,i) in infoBoxData" :key="v">{{i}}: {{v.slice(0,25)}}</p>
-    <input type="text" name="userString" id="">
+    <label v-for="(v,i) in infoBoxData" :key="v">
+      {{i}}
+      <input type="text" :value="v" disabled>
+    </label>
     <button @click="$emit('submitNewPixel')">Save</button>
   </div>
 </template>
@@ -21,8 +23,13 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .box  {
-  padding: 10px;
-  border: 1px solid blue;
-  border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+label {
+  padding: 0 10px;
 }
 </style>

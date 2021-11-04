@@ -1,4 +1,7 @@
 <template>
+  <div class="">
+    <button @click="test">API</button>
+  </div>
   <div class="fixed">
     <canvas class="canvas" ref="canvas" @click="selectPixel" width="500" height="500">Sorry, your browser needs to support canvas.</canvas>
     <InfoBox :style="infoBoxStyleObject" :info-box-data="infoBoxData" id="info-box" @submitNewPixel="submitNewPixel"/>
@@ -7,8 +10,9 @@
 
 <script>
 import InfoBox from './InfoBox.vue'
-import {getUserIp} from './ipinfo'
-import {calculatePixelColour} from './cryptoColourGenerator'
+import {getUserIp} from '../js/ipinfo'
+import {calculatePixelColour} from '../js/cryptoColourGenerator'
+import {getAllPixels} from '../js/pixelsApi'
 
 export default {
   name: 'Canvas',
@@ -31,25 +35,19 @@ export default {
         userIp: String(),
         userString: String(),
         pixelColour: [0,0,0,0]
-      }
+      },
     }
   },
   methods: {
-    populate() {
+    async populate() {
       // Get current pixel array from API
-      const curPixelArray = [
-        //DummyData
-        [10,10,100,100,100,255],
-        [20,20, 150,150,150,255],
-        [30,30, 200,200,200,255],
-      ]
+      const curPixelArray = await getAllPixels();
       // Populate canvas with current pixels
       let ctx = this.$refs.canvas.getContext('2d');
       curPixelArray.forEach((pixel) => {
-        console.log(pixel);
-        ctx.fillStyle = 'rgba('+pixel[2]+','+pixel[3]+','+pixel[4]+','+pixel[5]+')';
-        ctx.fillRect(pixel[0], pixel[1], 1, 1);
-      })
+        ctx.fillStyle = 'rgba('+pixel['rgba'][0]+','+pixel['rgba'][1]+','+pixel['rgba'][2]+','+pixel['rgba'][2]/100+')';
+        ctx.fillRect(pixel['x'],pixel['y'], 1, 1);
+      });
     },
     selectPixel(event) {
       let ctx = this.$refs.canvas.getContext('2d');
@@ -106,6 +104,9 @@ export default {
       // Send new pixel to API
       console.log("Sending to API: "+this.infoBoxData);
       window.location.replace('/?newPixel=123');
+    },
+    test() {
+      console.log(getAllPixels());
     }
   },
   mounted() {

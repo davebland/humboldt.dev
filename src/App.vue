@@ -4,7 +4,7 @@
     <h3>Click on the canvas to make a contribution</h3>
   </div>
   <hr>
-  <Canvas :current-pixel-data="getPixelData()"/>
+  <Canvas/>
 </template>
 
 <script>
@@ -17,16 +17,6 @@ export default {
     HWSLogo,
     Canvas
   },
-  methods: {
-    getPixelData() {
-      // Dummy
-      return {
-        data1: 'data1',
-        data2: 'data2',
-        data3: 'data3'
-      }
-    }
-  }
 }
 </script>
 
@@ -50,5 +40,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+h3 {
+  margin: 50px;
 }
 </style>
