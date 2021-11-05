@@ -22,3 +22,39 @@ export async function getAllPixels() {
         .catch((e) => console.log(e));
     return data
 }
+
+export async function getPixelData(pixelCoords) {
+    // Retrieve data for pixel at pixelCoords
+    let data = fetch('https://api.humboldt.dev/pixels/data?'+pixelCoords)
+        .then((response) => {
+            if (response.ok)
+                return response.json();
+            else
+                throw response;
+        })
+        .then((jsonArray) => {
+            console.log(jsonArray);           
+            return jsonArray;
+        })
+        .catch((e) => console.log(e));
+    return data
+}
+
+export async function sendNewPixel(pixelData) {
+    console.log(pixelData);
+    // Send new pixel data to api'
+    let result = fetch('https://api.humboldt.dev/pixels/new', {
+        "method":"POST",
+        "body": JSON.stringify({
+            coordinates: 333333,
+            rgba: [
+                pixelData['pixelColour'][0],
+                pixelData['pixelColour'][1],
+                pixelData['pixelColour'][2],
+                Math.round(pixelData['pixelColour'][3]*100),
+            ]
+            })
+        })
+        .catch((e) => console.log(e));
+    return result
+}

@@ -12,7 +12,7 @@
 import InfoBox from './InfoBox.vue'
 import {getUserIp} from '../js/ipinfo'
 import {calculatePixelColour} from '../js/cryptoColourGenerator'
-import {getAllPixels} from '../js/pixelsApi'
+import {getAllPixels, getPixelData, sendNewPixel} from '../js/pixelsApi'
 
 export default {
   name: 'Canvas',
@@ -57,8 +57,8 @@ export default {
       // Determine if pixel is already taken
       const existingPixelData = ctx.getImageData(modelX, modelY, 1, 1);
       if (!existingPixelData.data.every((e)=>e==0)) {
-        console.log('taken');
-        this.showExistingPixelData(existingPixelData);
+        console.log('taken');        
+        this.showExistingPixelData(modelX, modelY);
         return
       }
       // Else show the new pixel data
@@ -85,25 +85,23 @@ export default {
       // Calculate colour from strings
       this.infoBoxData.pixelColour = await calculatePixelColour(this.infoBoxData);
     },
-    async showExistingPixelData(existingPixelData) {
+    async showExistingPixelData(x,y) {
       // Query API for data about this pixel
-      const existingPixelInfo = {
-        //DummyData
-        browser: 'testbrowser',
-        datetime: new Date("2021-01-01").toISOString(),
-        userIp: 'testIp'
-      }
+      const existingPixelInfo = await getPixelData(String(x)+String(y));
       // Populate with retrieved data
-      this.infoBoxData.browser = existingPixelInfo.browser;
-      this.infoBoxData.datetime = existingPixelInfo.datetime;
-      this.infoBoxData.userIp = existingPixelInfo.userIp;
-      console.log(existingPixelData.data);
-      this.infoBoxData.pixelColour = Array.from(existingPixelData.data);
+        console.log(existingPixelInfo);
+        if (existingPixelInfo) {
+          this.infoBoxData.browser = existingPixelInfo['browser'];
+          this.infoBoxData.datetime = existingPixelInfo['datetime'];
+          this.infoBoxData.userIp = existingPixelInfo['userIp'];
+          //this.infoBoxData.pixelColour = Array.from(existingPixelData.data);
+        }
     },
     async submitNewPixel() {
       // Send new pixel to API
       console.log("Sending to API: "+this.infoBoxData);
-      window.location.replace('/?newPixel=123');
+      console.log(await sendNewPixel(this.infoBoxData));
+      //window.location.replace('/?newPixel=123');
     },
     test() {
       console.log(getAllPixels());
